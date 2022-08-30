@@ -4,7 +4,7 @@ const cityController = {
     create: async(req,res) => {
         const {city,country,photo,population,foundation} = req.body
         try {
-            await new City(city,country,photo,population,foundation)
+            await new City(city,country,photo,population,foundation).save
             res.status(201).json({
                 message: 'city created',
                 sucess: true
