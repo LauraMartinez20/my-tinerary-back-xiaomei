@@ -13,22 +13,27 @@ const cityController = {
             foundation
         } = req.body
 
-        try {
+        if (population) {
+            population >1000 & population < 100000000
 
-            await new City({city,country, details, intro,photo,population,foundation}).save()
-
-            res.status(201).json({
-                message: 'city created',
-                sucess: true
-            })
-        } catch(error){
-            res.status(400).json({
-                message: "couldn't create event",
-                sucess: false
-            })
+            try {
+                await new City({city,country, details, intro,photo,population,foundation}).save()
+    
+                res.status(201).json({
+                    message: 'city created',
+                    sucess: true
+                })
+            } catch(error){
+                res.status(400).json({
+                    message: "couldn't create event",
+                    sucess: false
+                })
+            }
         }
-    },
+        },
+
     all: async(req,res)=>{
+        
         let cities
 
         let query = {}
@@ -42,7 +47,12 @@ const cityController = {
         }
 
         if (req.query.country){
-            query.city = req.query.country
+            query.country = req.query.country
+        }
+
+        if (req.query.foundation){
+            query.foundation = req.query.foundation
+
         }
 
         try {
