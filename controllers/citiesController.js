@@ -56,7 +56,10 @@ const cityController = {
         }
 
         try {
-            cities = await City.find(query)
+            if(query.city){
+                cities = await City.find({city: {$regex : new RegExp ("^" + req.query.city.toLowerCase(),"i")}})
+         } else {  cities = await City.find()
+         } 
             res.status(200) .json({
                 message: "City found",
                 response: cities,
