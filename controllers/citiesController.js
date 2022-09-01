@@ -78,7 +78,8 @@ const cityController = {
         try {
             let cityOne = await City.findOne({_id:id},)
 
-            if(cityOne){
+            if(cityOne){ 
+                
                 res.status(200).json({
                     message: 'You get one city',
                     response: cityOne, 
