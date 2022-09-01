@@ -33,7 +33,7 @@ const cityController = {
         },
 
     all: async(req,res)=>{
-        
+        console.log(req.query)
         let cities
 
         let query = {}
