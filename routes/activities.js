@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const {create, read } = require('../controllers/userController.js')
+const {create, read } = require('../controllers/activityController.js')
 
 router.post('/',create);
 

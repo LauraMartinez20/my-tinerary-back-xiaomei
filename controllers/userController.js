@@ -20,16 +20,44 @@ const userController = {
     
         res.status(201).json({
             message: 'user created',
-            sucess: true
+            success: true
         })
     } catch (error) {
         res.status(400).json({
             message: "couldn't create user",
-            sucess: false
+            success: false
         })
         
     }
 }, 
+
+read: async (req, res) => {
+    const { id } = req.params
+    try {
+        let userOne = await User.findOne({ _id: id },)
+
+        if (userOne) {
+
+            res.status(200).json({
+                message: 'You get one User',
+                response: userOne,
+                success: true
+            })
+
+        } else {
+            res.status(404).json({
+                message: "couldn't find User",
+                success: false
+            })
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(400).json({
+            message: "",
+            success: false
+        })
+    }
+},
 
 }
 

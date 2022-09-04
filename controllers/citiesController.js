@@ -21,12 +21,12 @@ const cityController = {
     
                 res.status(201).json({
                     message: 'city created',
-                    sucess: true
+                    success: true
                 })
             } catch(error){
                 res.status(400).json({
                     message: "couldn't create event",
-                    sucess: false
+                    success: false
                 })
             }
         }
@@ -83,20 +83,20 @@ const cityController = {
                 res.status(200).json({
                     message: 'You get one city',
                     response: cityOne, 
-                    sucess: true
+                    success: true
                 })
 
             } else {
                 res.status(404).json({
                     message: "couldn't find city",
-                    sucess: false
+                    success: false
                 })
             }
         } catch (error) {
             console.log(error)
             res.status(400).json({
                 message: "",
-                sucess: false
+                success: false
             })   
         }
     },
@@ -108,7 +108,7 @@ const cityController = {
             res.status(200).json({
                 message:"The city was updated",
                 response: updateCity,
-                sucess: true
+                success: true
             })
         } catch (error) {
             console.log(error)
@@ -133,7 +133,7 @@ const cityController = {
             console.log(error)
             res.status(400).json({
                 message: "City not found",
-                sucess: false
+                success: false
             })
         }
     }
