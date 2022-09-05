@@ -78,6 +78,39 @@ const itineraryController = {
         }
     },
 
+    itineraries: async (req, res) => {
+        console.log(req.query)
+        let {id} = req.params
+
+        let query = {}
+
+        if (req.query.user) {
+            query.user = req.query.user
+            console.log(query.user)
+        }
+        if (req.query.city) {
+            query.city = req.query.city
+        }
+
+        try {
+            let users = await Itinerary.find(query)
+            .populate ("city", {name:1})
+            .populate("user", {name:1})
+            res.status(200).json({
+                message: "City found",
+                response: users,
+                success: true
+            })
+
+        } catch (error) {
+
+            console.log(error)
+            res.status(400).json()
+        }
+    },
+
+   
+
     destroy: async (req, res) => {
         const itinerary = req.body
         let { id } = req.params
