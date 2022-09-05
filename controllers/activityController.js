@@ -1,5 +1,6 @@
 const Activity = require('../models/Activity')
 
+
 const activityController = {
 
     create: async (req, res) => {
@@ -49,6 +50,31 @@ const activityController = {
                 message: "",
                 success: false
             })
+        }
+    },
+    getItinerary: async (req, res) => {
+        console.log(req.query)
+        let itineraries
+        let {id} = req.params
+
+        let query = {}
+
+        if (req.query.itineraries) {
+            query.users = req.query.itineraries
+        }
+
+        try {
+            users = await Activity.find({itineraries:id}).populate("itinearies")
+            res.status(200).json({
+                message: "City found",
+                response: itineraries,
+                success: true
+            })
+
+        } catch (error) {
+
+            console.log(error)
+            res.status(400).json()
         }
     },
 
