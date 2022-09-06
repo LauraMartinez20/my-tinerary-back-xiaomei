@@ -97,7 +97,7 @@ const itineraryController = {
             .populate ("city", {name:1})
             .populate("user", {name:1})
             res.status(200).json({
-                message: "City found",
+                message: "query found",
                 response: users,
                 success: true
             })
@@ -109,7 +109,6 @@ const itineraryController = {
         }
     },
 
-   
 
     destroy: async (req, res) => {
         const itinerary = req.body
