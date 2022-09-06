@@ -52,21 +52,23 @@ const activityController = {
             })
         }
     },
-    getItinerary: async (req, res) => {
+    itinerary: async (req, res) => {
         console.log(req.query)
-        let itineraries
         let {id} = req.params
 
         let query = {}
 
-        if (req.query.itineraries) {
-            query.users = req.query.itineraries
+        if (req.query.itinerary) {
+            query.itinerary = req.query.itinerary
         }
 
+        console.log (query.itinerary)
+
         try {
-            users = await Activity.find({itineraries:id}).populate("itinearies")
+            let itineraries = await Activity.find(query)
+            .populate("itineary", {name:1})
             res.status(200).json({
-                message: "City found",
+                message: "itinerary found",
                 response: itineraries,
                 success: true
             })
