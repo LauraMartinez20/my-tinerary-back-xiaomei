@@ -1,88 +1,89 @@
-const  City = require('../models/City')
+const City = require('../models/City')
 
 const cityController = {
 
-    create: async(req,res) => {
+    create: async (req, res) => {
         const {
             city,
-            country, 
-            details, 
-            intro, 
-            photo, 
-            population, 
+            country,
+            details,
+            intro,
+            photo,
+            population,
             foundation
         } = req.body
 
         if (population) {
-            population >1000 & population < 100000000
+            population > 1000 & population < 100000000
 
             try {
-                await new City({city,country, details, intro,photo,population,foundation}).save()
-    
+                await new City({ city, country, details, intro, photo, population, foundation }).save()
+
                 res.status(201).json({
                     message: 'city created',
                     success: true
                 })
-            } catch(error){
+            } catch (error) {
                 res.status(400).json({
                     message: "couldn't create event",
                     success: false
                 })
             }
         }
-        },
+    },
 
-    all: async(req,res)=>{
+    all: async (req, res) => {
         console.log(req.query)
         let cities
 
         let query = {}
 
-        if (req.query.population){
+        if (req.query.population) {
             query.population = req.query.population
         }
 
-        if (req.query.city){
+        if (req.query.city) {
             query.city = req.query.city
         }
 
-        if (req.query.country){
+        if (req.query.country) {
             query.country = req.query.country
         }
 
-        if (req.query.foundation){
+        if (req.query.foundation) {
             query.foundation = req.query.foundation
 
         }
 
         try {
-            if(query.city){
-                cities = await City.find({city: {$regex : new RegExp ("^" + req.query.city.toLowerCase(),"i")}})
-         } else {  cities = await City.find()
-         } 
-            res.status(200) .json({
+            if (query.city) {
+                cities = await City.find({ city: { $regex: new RegExp("^" + req.query.city.toLowerCase(), "i") } })
+            } else {
+                cities = await City.find()
+            }
+            res.status(200).json({
                 message: "City found",
                 response: cities,
                 success: true
             })
 
         } catch (error) {
-            
+
             console.log(error)
             res.status(400).json()
         }
     },
 
-    read: async(req,res) => {
-        const {id} = req.params
+    read: async (req, res) => {
+        const { id } = req.params
         try {
-            let cityOne = await City.findOne({_id:id},)
+            let cityOne = await City.findOne({ _id: id },)
 
-            if(cityOne){ 
-                
+            if (cityOne) {
+
                 res.status(200).json({
                     message: 'You get one city',
-                    response: cityOne, 
+                    response: cityOne,
                     success: true
                 })
 
@@ -97,38 +98,38 @@ const cityController = {
             res.status(400).json({
                 message: "",
                 success: false
-            })   
+            })
         }
     },
-    update: async(req, res) => {
-            const city = req.body
-            let {id} = req.params
+    update: async (req, res) => {
+        const city = req.body
+        let { id } = req.params
         try {
-            let updateCity = await City.findOneAndUpdate({_id:id},city,{new: true})
+            let updateCity = await City.findOneAndUpdate({ _id: id }, city, { new: true })
             res.status(200).json({
-                message:"The city was updated",
+                message: "The city was updated",
                 response: updateCity,
                 success: true
             })
         } catch (error) {
             console.log(error)
             res.status(400).json({
-                message:"error",
+                message: "error",
                 success: false
             })
-            
+
         }
     },
-    destroy: async (req,res) => {
-        const city =req.body
-        let {id} = req.params
+    destroy: async (req, res) => {
+        const city = req.body
+        let { id } = req.params
         try {
-            let deleteCity = await City.findOneAndDelete({_id:id},city,)
+            let deleteCity = await City.findOneAndDelete({ _id: id }, city,)
             res.status(200).json({
-                message:"City deleted",
+                message: "City deleted",
                 success: true
             })
-            
+
         } catch (error) {
             console.log(error)
             res.status(400).json({
@@ -137,6 +138,6 @@ const cityController = {
             })
         }
     }
-} 
+}
 
 module.exports = cityController
