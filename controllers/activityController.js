@@ -58,15 +58,15 @@ const activityController = {
 
         let query = {}
 
-        if (req.query.itinerary) {
-            query.itinerary = req.query.itinerary
+        if (req.query.itineraries) {
+            query.itinerary = req.query.itineraries //info that comes from front. 
         }
 
         console.log (query.itinerary)
 
         try {
             let itineraries = await Activity.find(query)
-            .populate("itineary", {name:1})
+            .populate("itinerary", {name:1, photo:1})
             res.status(200).json({
                 message: "itinerary found",
                 response: itineraries,
