@@ -14,7 +14,7 @@ const itineraryController = {
         } = req.body
 
         try {
-            await new Itinerary({ name, user, city, price, likes, tags, duration, })
+            await new Itinerary({ name:1, user:1, city:1, price:1, likes:1, tags:1, duration:1, })
 
             res.status(201).json({
                 message: 'itinerary created',
