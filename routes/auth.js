@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
-const {create, read } = require('../controllers/userController.js')
+const {signUp, verifyMail, signIn, signOut } = require('../controllers/userController.js')
 
-router.post('/',create);
+router.post('/signup',signUp);
 
-router.get('/:id', read);
+
 
 module.exports = router;
