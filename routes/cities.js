@@ -10,7 +10,7 @@ router.post('/',create);
 
   router.get('/:id', read);
 
-  router.put('/:id', update)
+  router.patch('/:id', update)
 
   router.delete('/:id', destroy)
 
