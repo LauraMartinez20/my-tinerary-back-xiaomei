@@ -6,7 +6,7 @@ const bcryptjs = require('bcryptjs') //trasforma contraeña en hash
 const userController = {
 
     signUp: async (req, res) => {
-        const {
+        let {
             name,
             lastName,
             photo,
@@ -30,16 +30,18 @@ const userController = {
 
                 if (from === 'form') { //si viene de formulario de registro
                     password = bcryptjs.hashSync(password, 10) //metodo hashsync que necesita 2 parametros contraseña y nivel seguridad que requiere
-                    user = await new User({ name, lastName, country, photo, password: [password], role, from :[from], logged, verified, code }).save()
+                    user = await new User({ name, lastName, email, country, photo, password: [password], role, from :[from], logged, verified, code }).save()
                     //hay que incorporar el mail para envio de verificacion 
                     res.status(201).json({
                         message: "User signed up from form",
                         success: true
                     })
                 } else { //si viene de otra fuente 
-                    password = bcryptjs.hashSync(password, 10) //metodo hashsync que necesita 2 parametros contraseña y nivel seguridad que requiere
+
+                    password = bcryptjs.hashSync(password, 10)
+                     //metodo hashsync que necesita 2 parametros contraseña y nivel seguridad que requiere
                     let verified = true
-                    user = await new User({ name, lastName, country, photo, password: [password], role, from :[from], logged, verified, code }).save()
+                    user = await new User({ name, lastName,email, country, photo, password: [password], role, from :[from], logged, verified, code }).save()
                     //hay que incorporar el mail para envio de verificacion 
                     res.status(201).json({
                         message: "User signed up from" + from,
@@ -93,7 +95,7 @@ module.exports = userController
 
 
 
-//old code that was artificially created
+//old code that user was artificially created
 
 
 /* create: async (req, res) => {
