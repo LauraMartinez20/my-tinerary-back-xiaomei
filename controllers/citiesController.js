@@ -11,15 +11,15 @@ const cityController = {
             photo,
             population,
             foundation
-        } = req.body
+        } =     req.body // en e req.body estará toda la información y data  que el usurio enviará desde el front
 
         if (population) {
             population > 1000 & population < 100000000
 
             try {
-                await new City({ city, country, details, intro, photo, population, foundation }).save()
+                await new City({ city, country, details, intro, photo, population, foundation }).save() //función asyncrona por el await 
 
-                res.status(201).json({
+                res.status(201).json({ //configuramos la respuesta
                     message: 'city created',
                     success: true
                 })
