@@ -94,7 +94,7 @@ const userController = {
 
                 const checkPassword = user.password.filter(passwordElement => bcryptjs.compareSync(password, passwordElement)) //comparamos el pass con hash y sin hash para ver si lleganal mismoresutado
 
-                if (from == 'form') { //usuario ingresa por form
+                if (from === 'form') { //usuario ingresa por form
 
                     if (checkPassword.length > 0) { //si contrasela coincide
 
