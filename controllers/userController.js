@@ -1,7 +1,7 @@
 const User = require('../models/User')
 const crypto = require('crypto') //codigo que antes se tenia que installar y es nativo de node y se usa para tener mayor seguridad en claves
 const bcryptjs = require('bcryptjs') //trasforma contraeña en hash
-const sendMail = require ('./sendMail')
+const sendMail = require('./sendMail')
 
 
 const userController = {
@@ -31,8 +31,8 @@ const userController = {
 
                 if (from === 'form') { //si viene de formulario de registro
                     password = bcryptjs.hashSync(password, 10) //metodo hashsync que necesita 2 parametros contraseña y nivel seguridad que requiere
-                    user = await new User({ name, lastName, email, country, photo, password: [password], role, from :[from], logged, verified, code }).save()
-                    sendMail(email,code)
+                    user = await new User({ name, lastName, email, country, photo, password: [password], role, from: [from], logged, verified, code }).save()
+                    sendMail(email, code)
                     res.status(201).json({
                         message: "User signed up from form",
                         success: true
@@ -40,9 +40,9 @@ const userController = {
                 } else { //si viene de otra fuente 
 
                     password = bcryptjs.hashSync(password, 10)
-                     //metodo hashsync que necesita 2 parametros contraseña y nivel seguridad que requiere
+                    //metodo hashsync que necesita 2 parametros contraseña y nivel seguridad que requiere
                     let verified = true
-                    user = await new User({ name, lastName,email, country, photo, password: [password], role, from :[from], logged, verified, code }).save()
+                    user = await new User({ name, lastName, email, country, photo, password: [password], role, from: [from], logged, verified, code }).save()
                     //hay que incorporar el mail para envio de verificacion 
                     res.status(201).json({
                         message: "User signed up from" + from,
@@ -50,14 +50,14 @@ const userController = {
                     })
 
                 }
-            }else{
-                if(user.from.includes(from)){ //si propiedadfrom  del usuario el valor from 
-                                            // essi el usuario esta en [google, facebook etc]
+            } else {
+                if (user.from.includes(from)) { //si propiedadfrom  del usuario el valor from 
+                    // essi el usuario esta en [google, facebook etc]
                     res.status(200).json({
                         message: 'user already exists',
                         success: false // porque no tien exito en la creacion del usuario porque este ya existe
                     })
-                }else{ // ==> uawe.from [fgoogle]
+                } else { // ==> uawe.from [fgoogle]
                     user.from.push(from) //vinculo la nueva forma de registro al usuario encontrado mediante un push a from
                     user.verified = true //si usuario tiene registros previos signifiva que ya se verifico en registros previos. 
                     user.password.push(bcryptjs.hashSync(password, 10))
@@ -81,17 +81,108 @@ const userController = {
     },
     //El código único y aleatorio creado en sendMail se pasa por params a este método para verificar la cuenta
     //luego de requerirlo, lo comparamos con los perfiles ya creados (Se busca en base de datos)
-    verifyMail: async (req, res) => { 
-        const {code} = req.params
+    signIn: async (req, res) => {
+        const { email, password, from } = req.body
+        try {
+            const user = await User.findOne({ email })
+            if (!user) { // si usuario no existe
+                res.status(404).json({
+                    success: false,
+                    message: 'User not found, please sign up',
+                })
+            } else if (user.verify) { //si usuario existe y esta verificado
 
-        let user = await User.findOne({code})//nombre propiedad=nombre variable
+                const checkPassword = user.password.filter(passwordElement => bcryptjs.compareSync(password, passwordElement)) //comparamos el pass con hash y sin hash para ver si lleganal mismoresutado
+
+                if (from == 'form') { //usuario ingresa por form
+
+                    if (checkPassword.length > 0) { //si contrasela coincide
+
+                        const loginUser = {
+                            id: user._id,
+                            name: user.name,
+                            email: user.email,
+                            role: user.role,
+                            from: user.from,
+                            photo: user.photo
+                        }
+
+                        user.logged = true
+                        await user.save() //se cambia el logged true del usuario
+
+                        res.status(200).json({
+                            sucess: true,
+                            response: 'user: loginUser',
+                            message: 'Welcome' + user.name
+                        })
+                    } else { //si contraseña no coincide
+                        res.status(400).json({
+                            sucess: false,
+                            message: 'User name or password is not correct'
+                        })
+                    }
+
+                } else { // usuario ingresa por redes sociales
+                    if (checkPassword.length > 0) { //si contrasela coincide
+
+                        const loginUser = {
+                            id: user._id,
+                            name: user.name,
+                            email: user.email,
+                            role: user.role,
+                            from: user.from,
+                            photo: user.photo
+                        }
+
+                        user.logged = true
+                        await user.save() //se cambia el logged true del usuario
+
+                        res.status(200).json({
+                            sucess: true,
+                            response: 'user: loginUser',
+                            message: 'Welcome' + user.name
+                        })
+                    } else { //si contraseña no coincide
+                        res.status(400).json({
+                            sucess: false,
+                            message: 'User name or password is not correct'
+                        })
+                    }
+                }
+
+
+            } else { // si usuario existe y NO esta verificado
+                res.status(401).json({
+                    sucess: false,
+                    message: 'Verify your email account and try again'
+                })
+
+            }
+
+
+        } catch (error) {
+            console.log(error)
+            res.status(400).json({
+                sucess: false,
+                    message: 'Uh oh something is wrong, try again'
+
+            })
+
+        }
+    },
+
+
+    verifyMail: async (req, res) => {
+        const { code } = req.params
+
+        let user = await User.findOne({ code })//nombre propiedad=nombre variable
 
         try {
             if (user) {
                 user.verified = true
                 await user.save()
                 res.redirect('https://www.google.com') //link de redireccionamiento
-            }else {
+            } else {
                 res.status(404).json({
                     message: "email doesn't has an account yet",
                     success: false
@@ -103,15 +194,15 @@ const userController = {
                 message: "account could not be verified",
                 success: false
             })
-            
+
         }
     },
 
-    signIn: async (req, res) => { },
 
-    signOut: async (req, res) => { }, //indOneandUpdate y cambiar de true a false
 
-    
+    signOut: async (req, res) => { }, //findOneandUpdate y cambiar de true a false
+
+
 
 }
 
