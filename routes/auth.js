@@ -3,6 +3,7 @@ var router = express.Router();
 const {signUp, verifyMail, signIn, signOut } = require('../controllers/userController.js')
 
 router.post('/signup',signUp);
+router.post('/signin',signIn);
 router.get('/verify:code',verifyMail) //property is changed but needs to be read first
 
 
