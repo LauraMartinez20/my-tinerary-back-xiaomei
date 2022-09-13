@@ -1,5 +1,5 @@
-var express = require('express');
-var router = express.Router();
+var express = require('express'); //porque usamos métodos de express como el express.router, .get, .post y demás
+var router = express.Router(); //objeto que se le agrega un método .post para que controle el controlador
 const {create, read, all, update, destroy } = require('../controllers/citiesController.js')
 
 /* GET users listing. */

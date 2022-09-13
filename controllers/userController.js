@@ -1,6 +1,7 @@
 const User = require('../models/User')
 const crypto = require('crypto') //codigo que antes se tenia que installar y es nativo de node y se usa para tener mayor seguridad en claves
 const bcryptjs = require('bcryptjs') //trasforma contraeña en hash
+const sendMail = require ('./sendMail')
 
 
 const userController = {
@@ -31,7 +32,7 @@ const userController = {
                 if (from === 'form') { //si viene de formulario de registro
                     password = bcryptjs.hashSync(password, 10) //metodo hashsync que necesita 2 parametros contraseña y nivel seguridad que requiere
                     user = await new User({ name, lastName, email, country, photo, password: [password], role, from :[from], logged, verified, code }).save()
-                    //hay que incorporar el mail para envio de verificacion 
+                    sendMail(email,code)
                     res.status(201).json({
                         message: "User signed up from form",
                         success: true
@@ -78,8 +79,33 @@ const userController = {
         }
 
     },
+    //El código único y aleatorio creado en sendMail se pasa por params a este método para verificar la cuenta
+    //luego de requerirlo, lo comparamos con los perfiles ya creados (Se busca en base de datos)
+    verifyMail: async (req, res) => { 
+        const {code} = req.params
 
-    verifyMail: async (req, res) => { },
+        let user = await User.findOne({code})//nombre propiedad=nombre variable
+
+        try {
+            if (user) {
+                user.verified = true
+                await user.save()
+                res.redirect('https://www.google.com') //link de redireccionamiento
+            }else {
+                res.status(404).json({
+                    message: "email doesn't has an account yet",
+                    success: false
+                })
+            }
+        } catch (error) {
+            console.log(error)
+            res.status(400).json({
+                message: "account could not be verified",
+                success: false
+            })
+            
+        }
+    },
 
     signIn: async (req, res) => { },
 
@@ -95,7 +121,7 @@ module.exports = userController
 
 
 
-//old code that user was artificially created
+//old code where user was artificially created
 
 
 /* create: async (req, res) => {
@@ -152,5 +178,7 @@ read: async (req, res) => {
         })
     }
 },*/
+
+
 
 
