@@ -24,7 +24,7 @@ const sendMail = async (email,code) =>{ // asincrona porque dependerá de las re
             type: 'OAuth2',
             clientId: GOOGLE_ID,
             clientSecret: GOOGLE_SECRET,
-            refresh_token: GOOGLE_REFRESH,
+            refreshToken: GOOGLE_REFRESH,
             accessToken: accessToken 
         },
         tls:{
@@ -38,9 +38,9 @@ const sendMail = async (email,code) =>{ // asincrona porque dependerá de las re
         html: `
         <div> 
         <div>
-                <h1>Hello  ${mail}</h1>
+                <h1>Hello  ${email}</h1>
                 <p>click the next link to verify your account.</p>
-                <a href='http://localhost:8000/auth/verify/${code}'>click to verify!</a>
+                <a href='http://localhost:4000/auth/verify/${code}'>click to verify!</a>
             </div>`//enviar link hacia una página para verificar el mail MÉTODO DEL CONTROLADOR VERIFYMAIL PARA CAMBIAR EL BOOLEANO DE VERIFIED
     }
     await transport.sendMail(emailOptions, (error,response)=>{
