@@ -31,7 +31,7 @@ const userController = {
 
                 if (from === 'form') { //si viene de formulario de registro
                     password = bcryptjs.hashSync(password, 10) //metodo hashsync que necesita 2 parametros contraseña y nivel seguridad que requiere
-                    user = await new User({ name, lastName, email, country, photo, password: [password], role, from: [from], logged, verified, code }).save()
+                    user = await new User({ name, lastName, email, photo, password: [password], role, from: [from], logged, verified, code }).save()
                     sendMail(email, code)
                     res.status(201).json({
                         message: "User signed up from form",
@@ -42,7 +42,7 @@ const userController = {
                     password = bcryptjs.hashSync(password, 10)
                     //metodo hashsync que necesita 2 parametros contraseña y nivel seguridad que requiere
                     let verified = true
-                    user = await new User({ name, lastName, email, country, photo, password: [password], role, from: [from], logged, verified, code }).save()
+                    user = await new User({ name, lastName, email, photo, password: [password], role, from: [from], logged, verified, code }).save()
                     //hay que incorporar el mail para envio de verificacion 
                     res.status(201).json({
                         message: "User signed up from" + from,
@@ -82,7 +82,7 @@ const userController = {
     //El código único y aleatorio creado en sendMail se pasa por params a este método para verificar la cuenta
     //luego de requerirlo, lo comparamos con los perfiles ya creados (Se busca en base de datos)
     signIn: async (req, res) => {
-        const { email, password, from } = req.body
+        const { email, password, from, role } = req.body
         try {
             const user = await User.findOne({ email })
             if (!user) { // si usuario no existe
@@ -100,11 +100,11 @@ const userController = {
 
                         const loginUser = {
                             id: user._id,
-                            name: user.name,
                             email: user.email,
                             role: user.role,
                             from: user.from,
-                            photo: user.photo
+                            
+                            
                         }
 
                         user.logged = true
@@ -112,7 +112,7 @@ const userController = {
 
                         res.status(200).json({
                             sucess: true,
-                            response: 'user: loginUser',
+                            response: {user: loginUser, },
                             message: 'Welcome' + user.name
                         })
                     } else { //si contraseña no coincide
@@ -127,11 +127,9 @@ const userController = {
 
                         const loginUser = {
                             id: user._id,
-                            name: user.name,
                             email: user.email,
                             role: user.role,
                             from: user.from,
-                            photo: user.photo
                         }
 
                         user.logged = true
@@ -200,7 +198,20 @@ const userController = {
 
 
 
-    signOut: async (req, res) => { }, //findOneandUpdate y cambiar de true a false
+    signOut: async (req, res) => { 
+        const { email } = req.body
+
+        try {
+            const user = await User.findOneAndUpdate({ email })
+            if(user.logged == true) {
+                user.logged = false
+                await user.save()
+            }
+        } catch (error) {
+            console.log(error)
+            
+        }
+    }, //findOneandUpdate y cambiar de true a false
 
 
 
