@@ -4,6 +4,7 @@ const {signUp, verifyMail, signIn, signOut } = require('../controllers/userContr
 
 router.post('/signup',signUp);
 router.post('/signin',signIn);
+router.post('/signOut',signOut);
 router.get('/verify:code',verifyMail) //property is changed but needs to be read first
 
 
