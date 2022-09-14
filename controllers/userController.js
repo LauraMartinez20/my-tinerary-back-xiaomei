@@ -3,6 +3,11 @@ const crypto = require('crypto') //codigo que antes se tenia que installar y es 
 const bcryptjs = require('bcryptjs') //trasforma contraeña en hash
 const sendMail = require('./sendMail')
 
+/*const userSignInValidator = Joi.object({
+    "email": Joi.string().email().required(),
+    "password": Joi.string().required(),
+    "from": Joi.string().required()
+})*/
 
 const userController = {
 
@@ -32,7 +37,7 @@ const userController = {
                 if (from === 'form') { //si viene de formulario de registro
                     password = bcryptjs.hashSync(password, 10) //metodo hashsync que necesita 2 parametros contraseña y nivel seguridad que requiere
                     user = await new User({ name, lastName, email, photo, password: [password], role, from: [from], logged, verified, code }).save()
-                    sendMail(email, code)
+                    sendMail(email, name, photo, code)
                     res.status(201).json({
                         message: "User signed up from form",
                         success: true
@@ -82,15 +87,19 @@ const userController = {
     //El código único y aleatorio creado en sendMail se pasa por params a este método para verificar la cuenta
     //luego de requerirlo, lo comparamos con los perfiles ya creados (Se busca en base de datos)
     signIn: async (req, res) => {
-        const { email, password, from, role } = req.body
+        const { email, password, from} = req.body
+
         try {
+
+            
+
             const user = await User.findOne({ email })
             if (!user) { // si usuario no existe
                 res.status(404).json({
                     success: false,
                     message: 'User not found, please sign up',
                 })
-            } else if (user.verify) { //si usuario existe y esta verificado
+            } else if (user.verified) { //si usuario existe y esta verificado
 
                 const checkPassword = user.password.filter(passwordElement => bcryptjs.compareSync(password, passwordElement)) //comparamos el pass con hash y sin hash para ver si lleganal mismoresutado
 
@@ -103,6 +112,7 @@ const userController = {
                             email: user.email,
                             role: user.role,
                             from: user.from,
+                            photo:user.photo
                             
                             
                         }
@@ -130,6 +140,7 @@ const userController = {
                             email: user.email,
                             role: user.role,
                             from: user.from,
+                            photo:user.photo,
                         }
 
                         user.logged = true
@@ -173,13 +184,13 @@ const userController = {
     verifyMail: async (req, res) => {
         const { code } = req.params
 
-        let user = await User.findOne({ code })//nombre propiedad=nombre variable
+        let user = await User.findOne({ code: code })//nombre propiedad=nombre variable
 
         try {
             if (user) {
                 user.verified = true
                 await user.save()
-                res.redirect('https://www.google.com') //link de redireccionamiento
+                res.redirect('https://localhost:3000/cities') //link de redireccionamiento
             } else {
                 res.status(404).json({
                     message: "email doesn't has an account yet",
@@ -202,13 +213,26 @@ const userController = {
         const { email } = req.body
 
         try {
-            const user = await User.findOneAndUpdate({ email })
+            const user = await User.findOneAndUpdate({ email: email })
             if(user.logged == true) {
                 user.logged = false
                 await user.save()
+                res.status(200).json({
+                    message: "Logged out succesfully",
+                    success: true
+                })
+            }else {
+                res.status(400).json({
+                    message: "User is not logged in",
+                    success: false
+                })
             }
         } catch (error) {
             console.log(error)
+            res.status(400).json({
+                message: "sign out error please try again.",
+                success: false
+            })
             
         }
     }, //findOneandUpdate y cambiar de true a false
