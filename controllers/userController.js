@@ -81,7 +81,7 @@ const userController = {
     //El código único y aleatorio creado en sendMail se pasa por params a este método para verificar la cuenta
     //luego de requerirlo, lo comparamos con los perfiles ya creados (Se busca en base de datos)
     signIn: async (req, res) => {
-        const { email, password, from } = req.body
+        const { email, password, from, role } = req.body
         try {
             const user = await User.findOne({ email })
             if (!user) { // si usuario no existe
@@ -99,11 +99,11 @@ const userController = {
 
                         const loginUser = {
                             id: user._id,
-                            name: user.name,
                             email: user.email,
                             role: user.role,
                             from: user.from,
-                            photo: user.photo
+                            
+                            
                         }
 
                         user.logged = true
@@ -111,7 +111,7 @@ const userController = {
 
                         res.status(200).json({
                             sucess: true,
-                            response: 'user: loginUser',
+                            response: {user: loginUser, },
                             message: 'Welcome' + user.name
                         })
                     } else { //si contraseña no coincide
@@ -126,11 +126,9 @@ const userController = {
 
                         const loginUser = {
                             id: user._id,
-                            name: user.name,
                             email: user.email,
                             role: user.role,
                             from: user.from,
-                            photo: user.photo
                         }
 
                         user.logged = true
@@ -199,7 +197,20 @@ const userController = {
 
 
 
-    signOut: async (req, res) => { }, //findOneandUpdate y cambiar de true a false
+    signOut: async (req, res) => { 
+        const { email } = req.body
+
+        try {
+            const user = await User.findOneAndUpdate({ email })
+            if(user.logged == true) {
+                user.logged = false
+                await user.save()
+            }
+        } catch (error) {
+            console.log(error)
+            
+        }
+    }, //findOneandUpdate y cambiar de true a false
 
 
 
