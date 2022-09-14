@@ -13,7 +13,6 @@ const userController = {
             photo,
             email,
             password,
-            country,
             role, //rolfromfront
             from, //from fromfront paraavisar a metodo des de donde se crea el usuario 
 
@@ -31,7 +30,7 @@ const userController = {
 
                 if (from === 'form') { //si viene de formulario de registro
                     password = bcryptjs.hashSync(password, 10) //metodo hashsync que necesita 2 parametros contraseña y nivel seguridad que requiere
-                    user = await new User({ name, lastName, email, country, photo, password: [password], role, from: [from], logged, verified, code }).save()
+                    user = await new User({ name, lastName, email, photo, password: [password], role, from: [from], logged, verified, code }).save()
                     sendMail(email, code)
                     res.status(201).json({
                         message: "User signed up from form",
@@ -42,7 +41,7 @@ const userController = {
                     password = bcryptjs.hashSync(password, 10)
                     //metodo hashsync que necesita 2 parametros contraseña y nivel seguridad que requiere
                     let verified = true
-                    user = await new User({ name, lastName, email, country, photo, password: [password], role, from: [from], logged, verified, code }).save()
+                    user = await new User({ name, lastName, email, photo, password: [password], role, from: [from], logged, verified, code }).save()
                     //hay que incorporar el mail para envio de verificacion 
                     res.status(201).json({
                         message: "User signed up from" + from,
