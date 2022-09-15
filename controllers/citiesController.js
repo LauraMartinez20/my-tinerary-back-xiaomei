@@ -1,4 +1,67 @@
 const City = require('../models/City')
+const Joi = require('joi')
+
+const validator = Joi.object({
+    "photo": Joi.string()
+    .required()
+    .uri()
+    .messages({
+        'any.required': 'PHOTO_REQUIRED',
+        'string.uri':'INVALID_URL'
+    }),
+    "city": Joi.string()
+    .required()
+    .min(4)
+    .max(100)
+    .messages({
+        'any.required': 'CITY_REQUIRED',
+        'string.min': 'CITY_TOO_SHORT',
+        'string.max': 'CITY_TOO_LARGE',
+    }),
+    "country": Joi.string()
+    .required()
+    .min(4)
+    .max(100)
+    .messages({
+        'any.required': 'COUNTRY_REQUIRED',
+        'string.min': 'COUNTRY_TOO_SHORT',
+        'string.max': 'COUNTRY_TOO_LARGE',
+    }),
+    "details": Joi.string()
+    .min(5)
+    .max(100)
+    .messages({
+        'any.required': 'DETAILS_REQUIRED',
+        'string.min': 'DETAILS_TOO_SHORT',
+        'string.max': 'DETAILS_TOO_LARGE',
+    }),
+    "intro": Joi.string()
+    .min(10)
+    .max(500)
+    .messages({
+        'any.required': 'INTRO_REQUIRED',
+        'string.min': 'INTRO_TOO_SHORT',
+        'string.max': 'INTRO_TOO_LARGE',
+    }),
+    "population": Joi.number()
+    .required()
+    .min(1000)
+    .max(100000000)
+    .messages({
+        'any.required': 'POPULATION_REQUIRED',
+        'string.min': 'POPULATION_TOO_SHORT',
+        'string.max': 'POPULATION_TOO_LARGE',
+    }),
+    "foundation": Joi.number()
+    .required()
+    .min(4)
+    .max(4)  
+    .messages({
+        'any.required': 'FOUNDATION_REQUIRED',
+        'string.min': 'FOUNDATION_TOO_SHORT',
+        'string.max': 'FOUNDATION_TOO_LARGE',
+    })
+})
 
 const cityController = {
 
@@ -10,13 +73,17 @@ const cityController = {
             intro,
             photo,
             population,
-            foundation
+            foundation 
         } =     req.body // en e req.body estará toda la información y data  que el usurio enviará desde el front
 
         if (population) {
             population > 1000 & population < 100000000
 
             try {
+                //Validamos antes de comunicarnos con el modelo
+                let result = await validator.validateAsync(req.body)
+            
+ 
                 await new City({ city, country, details, intro, photo, population, foundation }).save() //función asyncrona por el await 
 
                 res.status(201).json({ //configuramos la respuesta
