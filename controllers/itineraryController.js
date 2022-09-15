@@ -138,8 +138,8 @@ const itineraryController = {
 
         try {
             let users = await Itinerary.find(query)
-            .populate ("city", {name:1})
-            .populate("user", {name:1})
+            .populate ("city", {name:1, photo:1})
+            .populate("user", {name:1, photo:1})
             res.status(200).json({
                 message: "query found",
                 response: users,

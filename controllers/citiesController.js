@@ -54,8 +54,6 @@ const validator = Joi.object({
     }),
     "foundation": Joi.number()
     .required()
-    .min(4)
-    .max(4)  
     .messages({
         'any.required': 'FOUNDATION_REQUIRED',
         'string.min': 'FOUNDATION_TOO_SHORT',
@@ -76,19 +74,20 @@ const cityController = {
             foundation 
         } =     req.body // en e req.body estará toda la información y data  que el usurio enviará desde el front
 
-        if (population) {
-            population > 1000 & population < 100000000
+      //  if (population) {
+        //    population > 1000 & population < 100000000
 
             try {
                 //Validamos antes de comunicarnos con el modelo
                 let result = await validator.validateAsync(req.body)
             
  
-                await new City({ city, country, details, intro, photo, population, foundation }).save() //función asyncrona por el await 
+                let newcity = await new City({ city, country, details, intro, photo, population, foundation }).save() //función asyncrona por el await 
 
                 res.status(201).json({ //configuramos la respuesta
                     message: 'city created',
-                    success: true
+                    success: true,
+                    id: newcity._id
                 })
             } catch (error) {
                 res.status(400).json({
@@ -96,7 +95,7 @@ const cityController = {
                     success: false
                 })
             }
-        }
+        
     },
 
     all: async (req, res) => {
