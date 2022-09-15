@@ -1,4 +1,45 @@
 const Itinerary = require('../models/Itinerary')
+const Joi = require('joi')
+
+const validator = Joi.object({
+    "name": Joi.string()
+    .required()
+    .min(4)
+    .max(100)
+    .messages({
+        'any.required': 'NAME_REQUIRED',
+        'string.min': 'NAME_TOO_SHORT',
+        'string.max': 'NAME_TOO_LARGE',
+    }),
+    "price": Joi.number()
+    .required()
+    .min(100)
+    .max(1000)
+    .messages({
+        'any.required': 'PRICE_REQUIRED',
+        'string.min': 'PRICE_TOO_SHORT',
+        'string.max': 'PRICE_TOO_MUCH',
+    }),
+    "likes": Joi.array()
+    .required()
+    .messages({
+        'any.required': 'LIKES_REQUIRED',
+    }),
+    "tags": Joi.array()
+    .required()
+    .messages({
+        'any.required': 'TAGS_REQUIRED',
+    }),
+    "duration": Joi.string()
+    .required()
+    .min(30)
+    .max(500)
+    .messages({
+        'any.required': 'DURATION_REQUIRED',
+        'string.min': 'DURATION_TOO_SHORT',
+        'string.max': 'DURATION_TOO_LONG',
+    }),
+})
 
 const itineraryController = {
 
@@ -14,6 +55,9 @@ const itineraryController = {
         } = req.body
 
         try {
+            //Validamos antes de comunicarnos con el modelo
+            let result = await validator.validateAsync(req.body)
+
             await new Itinerary({ name, user, city, price, likes, tags, duration, }).save()
 
             res.status(201).json({
