@@ -1,5 +1,24 @@
 const Activity = require('../models/Activity')
+const Joi = require('joi')
 
+const validator = Joi.object({
+    "name": Joi.string()
+    .required()
+    .min(4)
+    .max(100)
+    .messages({
+        'any.required': 'NAME_REQUIRED',
+        'string.min': 'NAME_TOO_SHORT',
+        'string.max': 'NAME_TOO_LARGE',
+    }),
+    "photo":Joi.string()
+    .required()
+    .uri()
+    .messages({
+        'any.required': 'PHOTO_REQUIRED',
+        'string.uri':'INVALID_URL'
+    })  ,
+})
 
 const activityController = {
 
@@ -11,6 +30,9 @@ const activityController = {
         } = req.body
 
         try {
+
+            let result = await validator.validateAsync(req.body)
+            
             await new Activity({ name, photo, itinerary, })
 
             res.status(201).json({
