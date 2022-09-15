@@ -5,6 +5,10 @@ const sendMail = require('./sendMail')
 const Joi = require('joi')
 
 const validator = Joi.object({
+    "from": Joi.string(),
+
+    "role": Joi.string(),
+
     "name": Joi.string()
     .required()
     .min(4)
@@ -75,11 +79,12 @@ const userController = {
 
                 if (from === 'form') { //si viene de formulario de registro
                     password = bcryptjs.hashSync(password, 10) //metodo hashsync que necesita 2 parametros contraseña y nivel seguridad que requiere
-                    user = await new User({ name, lastName, email, photo, password: [password], role, from: [from], logged, verified, code }).save()
+                    let user = await new User({ name, lastName, email, photo, password: [password], role, from: [from], logged, verified, code }).save()
                     sendMail(email, name, photo, code)
                     res.status(201).json({
                         message: "User signed up from form",
-                        success: true
+                        success: true,
+                        id: user._id
                     })
                 } else { //si viene de otra fuente 
 
@@ -90,7 +95,8 @@ const userController = {
                     //hay que incorporar el mail para envio de verificacion 
                     res.status(201).json({
                         message: "User signed up from" + from,
-                        success: true
+                        success: true,
+                        
                     })
 
                 }
