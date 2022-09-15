@@ -6,7 +6,7 @@ const citiesSchema = new mongoose.Schema({
         required: true,
         validate: function (value) {
             if (! value.startsWith('http')) {
-                throw new Error('La URL debe comenzar con http')
+                throw new Error('URL must start with http')
             }
         }
     },
@@ -39,10 +39,8 @@ const citiesSchema = new mongoose.Schema({
          max: 100000000,
     }, 
     foundation: {
-        type:Date ,
+        type:String,
          required:true,
-         min: 4,
-         max: 4,
     },
     
 })
