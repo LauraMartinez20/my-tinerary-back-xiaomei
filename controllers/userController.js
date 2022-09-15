@@ -2,12 +2,50 @@ const User = require('../models/User')
 const crypto = require('crypto') //codigo que antes se tenia que installar y es nativo de node y se usa para tener mayor seguridad en claves
 const bcryptjs = require('bcryptjs') //trasforma contraeña en hash
 const sendMail = require('./sendMail')
+const Joi = require('joi')
 
-/*const userSignInValidator = Joi.object({
-    "email": Joi.string().email().required(),
-    "password": Joi.string().required(),
-    "from": Joi.string().required()
-})*/
+const validator = Joi.object({
+    "name": Joi.string()
+    .required()
+    .min(4)
+    .max(100)
+    .messages({
+        'any.required': 'NAME_REQUIRED',
+        'string.min': 'NAME_TOO_SHORT',
+        'string.max': 'NAME_TOO_LARGE',
+    }),
+    "lastName": Joi.string()
+    .required()
+    .min(4)
+    .max(100)
+    .messages({
+        'any.required': 'LAST_NAME_REQUIRED',
+        'string.min': 'LAST_NAME_TOO_SHORT',
+        'string.max': 'LAST_NAME_TOO_LARGE',
+    }),
+    "photo": Joi.string()
+    .required()
+    .uri()
+    .messages({
+        'any.required': 'PHOTO_REQUIRED',
+        'string.uri':'INVALID_URL'
+    }),
+    "email": Joi.string()
+    .required()
+    .messages({
+        'any.required': 'EMAIL_REQUIRED',
+    }),
+    "password": Joi.string()
+    .required()
+    .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
+    .messages({
+        'any.required': 'PASSWORD_REQUIRED',
+        'string.min': 'PASSWORD_TOO_SHORT',
+        'string.max': 'PASSWORD_TOO_LARGE',
+    }),
+
+
+})
 
 const userController = {
 
@@ -24,7 +62,9 @@ const userController = {
         } = req.body
 
         try {
-
+             //Validamos antes de comunicarnos con el modelo
+             let result = await validator.validateAsync(req.body)
+             
             let user = await User.findOne({ email })
             if (!user) {
                 let logged = false
