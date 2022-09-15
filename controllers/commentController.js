@@ -1,4 +1,18 @@
 const Comment = require('../models/Comment')
+const Joi = require('joi')
+
+const validator = Joi.object({
+    "comment": Joi.string()
+    .required()
+    .min(10)
+    .max(100)
+    .messages({
+        'any.required': 'COMMENT_REQUIRED',
+        'string.min': 'COMMENT_TOO_SHORT',
+        'string.max': 'COMMENT_TOO_LARGE',
+    })
+})
+
 
 const commentController = {
 
@@ -10,6 +24,8 @@ const commentController = {
         } = req.body
 
         try {
+            let result = await validator.validateAsync(req.body)
+
             await new Comment({ user, comment, itinerary, })
 
             res.status(201).json({
