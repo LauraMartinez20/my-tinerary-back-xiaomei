@@ -84,14 +84,13 @@ const userController = {
                     res.status(201).json({
                         message: "User signed up from form",
                         success: true,
-                        id: user._id
                     })
                 } else { //si viene de otra fuente 
 
                     password = bcryptjs.hashSync(password, 10)
                     //metodo hashsync que necesita 2 parametros contraseña y nivel seguridad que requiere
                     let verified = true
-                    user = await new User({ name, lastName, email, photo, password: [password], role, from: [from], logged, verified, code }).save()
+                    let user = await new User({ name, lastName, email, photo, password: [password], role, from: [from], logged, verified, code }).save()
                     //hay que incorporar el mail para envio de verificacion 
                     res.status(201).json({
                         message: "User signed up from" + from,
