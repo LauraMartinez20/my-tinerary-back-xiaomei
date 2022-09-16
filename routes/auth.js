@@ -6,7 +6,7 @@ router.post('/signup',signUp);
 
 router.post('/signin',signIn);
 
-router.post('/signOut',signOut);
+router.post('/signout',signOut);
 
 router.get('/verify:code',verifyMail) //property is changed but needs to be read first
 
