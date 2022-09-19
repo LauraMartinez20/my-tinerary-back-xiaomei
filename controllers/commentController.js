@@ -1,4 +1,18 @@
 const Comment = require('../models/Comment')
+const Joi = require('joi')
+
+const validator = Joi.object({
+    "comment": Joi.string()
+    .required()
+    .min(10)
+    .max(100)
+    .messages({
+        'any.required': 'COMMENT_REQUIRED',
+        'string.min': 'COMMENT_TOO_SHORT',
+        'string.max': 'COMMENT_TOO_LARGE',
+    })
+})
+
 
 const commentController = {
 
@@ -10,6 +24,8 @@ const commentController = {
         } = req.body
 
         try {
+            let result = await validator.validateAsync(req.body)
+
             await new Comment({ user, comment, itinerary, })
 
             res.status(201).json({
@@ -51,6 +67,57 @@ const commentController = {
             })
         }
     },
+
+    commentaries: async (req, res) => {
+        console.log(req.query)
+        let {id} = req.params
+
+        let query = {}
+
+        if (req.query.user) {
+            query.user = req.query.user
+            console.log(query.user)
+        }
+        if (req.query.itineraries) {
+            query.itinerary = req.query.itinerary
+        }
+
+        try {
+            let users = await Itinerary.find(query)
+            .populate ("itinerary", {name:1, photo:1})
+            .populate("user", {name:1, photo:1})
+            res.status(200).json({
+                message: "query found",
+                response: users,
+                success: true
+            })
+
+        } catch (error) {
+
+            console.log(error)
+            res.status(400).json()
+        }
+    },
+
+
+    destroy: async (req, res) => {
+        const commentary = req.body
+        let { id } = req.params
+        try {
+            let deleteComment = await Comment.findOneAndDelete({ _id: id }, commentary,)
+            res.status(200).json({
+                message: "Comment deleted",
+                success: true
+            })
+
+        } catch (error) {
+            console.log(error)
+            res.status(400).json({
+                message: "Comment not found",
+                success: false
+            })
+        }
+    }
 
 
 }

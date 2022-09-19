@@ -1,9 +1,14 @@
 var express = require('express');
 var router = express.Router();
-const {create, read } = require('../controllers/userController.js')
+const {signUp, verifyMail, signIn, signOut } = require('../controllers/userController.js')
 
-router.post('/',create);
+router.post('/signup',signUp);
 
-router.get('/:id', read);
+router.post('/signin',signIn);
+
+router.post('/signout',signOut);
+
+router.get('/verify:code',verifyMail) //property is changed but needs to be read first
+
 
 module.exports = router;

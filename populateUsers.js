@@ -11,18 +11,26 @@ User.create(
         {
             name: "Cinthya",
             lastName: " Di Risio",
-            mail: "dirisioc@mail.com",
+            email: "dirisioc@mail.com",
             password: "Kirito",
-            photo: "https://im.ge/i/Ocuw4P",
-            country: "Argentina",
+            photo: "https://i.im.ge/2022/09/04/Ocuw4P.Cindy.png",
+            role: "user",
+            from: "form",
+            logged:false,
+            verified: true,
+            code:"c346ddd705b5887a638d87569f020e"
         },
         {
             name: "Laura",
             lastName: "Martinez",
-            mail: "martinezl@mail.com",
+            email: "martinezl@mail.com",
             password: "Felix",
-            photo: "https://im.ge/i/OcuNs1",
-            country: "Colombia",
+            photo: "https://i.im.ge/2022/09/04/OcuNs1.Lau.png",
+            role: "user",
+            from: "form",
+            logged:false,
+            verified: true,
+            code:"c346ddd705b5887a638d87569f019e"
 
         },
 
@@ -30,10 +38,14 @@ User.create(
 
             name: "Natalia",
             lastName: "Torres",
-            mail: "torresn@mail.com",
+            email: "torresn@mail.com",
             password: "Zeus",
-            photo: "https://im.ge/i/Ocum3p",
-            country: "Holanda",
+            photo: "https://i.im.ge/2022/09/04/Ocum3p.Nati.png",
+            role: "user",
+            from: "form",
+            logged:false,
+            verified: true,
+            code:"c346ddd705b5887a638d87569f017e"
 
         }
 
