@@ -3,7 +3,7 @@ const {google} = require('googleapis')
 const OAuth2 = google.auth.OAuth2
 const {GOOGLE_ID,GOOGLE_REFRESH,GOOGLE_SECRET,GOOGLE_URL,GOOGLE_USER} =  process.env//=>process.env es el objeto que tiene las variables de entorno de google
 
-const sendMail = async (email,code) =>{ // asincrona porque dependerá de las respuestas de la api de google
+const sendMail = async (email,name,photo,code) =>{ // asincrona porque dependerá de las respuestas de la api de google
 
     const client = new OAuth2( //crear cliente de google-OAuth crea una credencial de cliente
         process.env.GOOGLE_ID,

@@ -234,7 +234,7 @@ const userController = {
             if (user) {
                 user.verified = true
                 await user.save()
-                res.redirect('https://localhost:3000/cities') //link de redireccionamiento
+                res.redirect('https://localhost:4000/cities') //link de redireccionamiento
             } else {
                 res.status(404).json({
                     message: "email doesn't has an account yet",
