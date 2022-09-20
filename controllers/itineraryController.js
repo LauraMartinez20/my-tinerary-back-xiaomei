@@ -3,42 +3,42 @@ const Joi = require('joi')
 
 const validator = Joi.object({
     "name": Joi.string()
-    .required()
-    .min(4)
-    .max(100)
-    .messages({
-        'any.required': 'NAME_REQUIRED',
-        'string.min': 'NAME_TOO_SHORT',
-        'string.max': 'NAME_TOO_LARGE',
-    }),
+        .required()
+        .min(4)
+        .max(100)
+        .messages({
+            'any.required': 'NAME_REQUIRED',
+            'string.min': 'NAME_TOO_SHORT',
+            'string.max': 'NAME_TOO_LARGE',
+        }),
     "price": Joi.number()
-    .required()
-    .min(100)
-    .max(1000)
-    .messages({
-        'any.required': 'PRICE_REQUIRED',
-        'string.min': 'PRICE_TOO_SHORT',
-        'string.max': 'PRICE_TOO_MUCH',
-    }),
+        .required()
+        .min(100)
+        .max(1000)
+        .messages({
+            'any.required': 'PRICE_REQUIRED',
+            'string.min': 'PRICE_TOO_SHORT',
+            'string.max': 'PRICE_TOO_MUCH',
+        }),
     "likes": Joi.array()
-    .required()
-    .messages({
-        'any.required': 'LIKES_REQUIRED',
-    }),
+        .required()
+        .messages({
+            'any.required': 'LIKES_REQUIRED',
+        }),
     "tags": Joi.array()
-    .required()
-    .messages({
-        'any.required': 'TAGS_REQUIRED',
-    }),
+        .required()
+        .messages({
+            'any.required': 'TAGS_REQUIRED',
+        }),
     "duration": Joi.string()
-    .required()
-    .min(30)
-    .max(500)
-    .messages({
-        'any.required': 'DURATION_REQUIRED',
-        'string.min': 'DURATION_TOO_SHORT',
-        'string.max': 'DURATION_TOO_LONG',
-    }),
+        .required()
+        .min(30)
+        .max(500)
+        .messages({
+            'any.required': 'DURATION_REQUIRED',
+            'string.min': 'DURATION_TOO_SHORT',
+            'string.max': 'DURATION_TOO_LONG',
+        }),
 })
 
 const itineraryController = {
@@ -78,13 +78,18 @@ const itineraryController = {
         const itinerary = req.body
         let { id } = req.params
         try {
-            let updateItinerary = await Itinerary.findOneAndUpdate({ _id: id }, itinerary, { new: true })
+
+            let findItinerary = await Itinerary.findOne({ _id: id })
+
+            if (findItinerary) {
+                await Itinerary.findOneAndUpdate({ _id: id }, itinerary, { new: true }).save()
             res.status(200).json({
                 message: "The itinerary was updated",
                 response: updateItinerary,
                 success: true
             })
-        } catch (error) {
+            }
+            } catch (error) {
             console.log(error)
             res.status(400).json({
                 message: "error",
@@ -124,7 +129,7 @@ const itineraryController = {
 
     itineraries: async (req, res) => {
         console.log(req.query)
-        let {id} = req.params
+        let { id } = req.params
 
         let query = {}
 
@@ -138,8 +143,8 @@ const itineraryController = {
 
         try {
             let users = await Itinerary.find(query)
-            .populate ("city", {name:1, photo:1})
-            .populate("user", {name:1, photo:1})
+                .populate("city", { name: 1, photo: 1 })
+                .populate("user", { name: 1, photo: 1 })
             res.status(200).json({
                 message: "query found",
                 response: users,
@@ -152,17 +157,56 @@ const itineraryController = {
             res.status(400).json()
         }
     },
+ 
+    
+    likes: async (req, res) => {
+
+        let { id } = req.params
+
+        let userId = req.user.id
+
+        try {
+            let itinerary = await Itinerary.findOne({ _id: id })
+
+            if (itinerary.likes.includes(userId)) {
+                await Itinerary.findByIdAndUpdate({ _id: id }, { $push: { likes: userId } }, { new: true }).save()
+                res.status(200).json({
+                    message: 'Liked',
+                    success: true
+                })
+            } else {
+                await Itinerary.findByIdAndUpdate({ _id: id }, { $pull: { likes: userId } }, { new: true }).save()
+                res.status(200).json({
+                    message: 'Disliked',
+                    success: true
+                })
+            }
+        } catch (error) {
+            console.log(error)
+            res.status(400).json({
+                message: 'error',
+                success: 'false'
+            })
+
+        }
+
+    },
 
 
     destroy: async (req, res) => {
         const itinerary = req.body
         let { id } = req.params
         try {
-            let deleteItinerary = await Itinerary.findOneAndDelete({ _id: id }, itinerary,)
-            res.status(200).json({
-                message: "Itinerary deleted",
-                success: true
-            })
+            let findItinerary = await Itinerary.find({ _id: id })
+
+            if (findItinerary) {
+                await Itinerary.findOneAndDelete({ _id: id }, itinerary,).save()
+                res.status(200).json({
+                    message: "Itinerary deleted",
+                    success: true
+                })
+
+            }
 
         } catch (error) {
             console.log(error)

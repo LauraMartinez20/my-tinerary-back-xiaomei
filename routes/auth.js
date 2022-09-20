@@ -1,10 +1,13 @@
 var express = require('express');
 var router = express.Router();
-const {signUp, verifyMail, signIn, signOut } = require('../controllers/userController.js')
+let passport = require('../config/passport')
+const {signUp, verifyMail, signIn, signOut, verifyToken} = require('../controllers/userController.js')
 
 router.post('/signup',signUp);
 
 router.post('/signin',signIn);
+
+router.get('token', passport.authenticate('jwt', {session:false}), verifyToken)
 
 router.post('/signout',signOut);
 
