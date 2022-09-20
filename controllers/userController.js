@@ -3,6 +3,8 @@ const crypto = require('crypto') //codigo que antes se tenia que installar y es 
 const bcryptjs = require('bcryptjs') //trasforma contraeña en hash
 const sendMail = require('./sendMail')
 const Joi = require('joi')
+const jwt = require('jsonwebtoken')
+
 
 const validator = Joi.object({
     "from": Joi.string(),
@@ -52,6 +54,7 @@ const validator = Joi.object({
 })
 
 const userController = {
+    
 
     signUp: async (req, res) => {
         let {
@@ -135,8 +138,6 @@ const userController = {
 
         try {
 
-            
-
             const user = await User.findOne({ email })
             if (!user) { // si usuario no existe
                 res.status(404).json({
@@ -160,13 +161,22 @@ const userController = {
                             
                             
                         }
+                        const token = jwt.sign(
+                            {id: user._id}, 
+                            process.env.KEY_JWT,
+                            {expiresIn: 60*60*24}
+                            )
+
 
                         user.logged = true
                         await user.save() //se cambia el logged true del usuario
 
                         res.status(200).json({
                             sucess: true,
-                            response: {user: loginUser, },
+                            response: {
+                                user: loginUser, 
+                                token: token
+                                },
                             message: 'Welcome' + user.name
                         })
                     } else { //si contraseña no coincide
@@ -224,6 +234,24 @@ const userController = {
         }
     },
 
+    verifyToken: async (req, res) => {
+        if (!req.err) {
+            let token = jwt.sign({id: req.user.id}, process.env.KEY_JWT, { expiresIn:60*60*24 })
+            res.status(200).json({
+                message: "Welcome" + req.user.name,
+                success: true,
+                response: {
+                    user: req.user,
+                    token: token
+                        }
+            })
+        }else{
+            res.status(400).json({
+                message: 'Sign in!',
+                success: false
+            })
+        }
+    },
 
     verifyMail: async (req, res) => {
         const { code } = req.params
