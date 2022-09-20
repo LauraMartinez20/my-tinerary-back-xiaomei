@@ -54,6 +54,7 @@ const validator = Joi.object({
 })
 
 const userController = {
+    
 
     signUp: async (req, res) => {
         let {
