@@ -7,7 +7,7 @@ router.post('/signup',signUp);
 
 router.post('/signin',signIn);
 
-router.get('token', passport.authenticate('jwt', {session:false}), verifyToken)
+router.get('/token', passport.authenticate('jwt', {session:false}), verifyToken)
 
 router.post('/signout',signOut);
 
