@@ -197,14 +197,24 @@ const userController = {
                             photo:user.photo,
                         }
 
-                        user.logged = true
-                        await user.save() //se cambia el logged true del usuario
+                        const token = jwt.sign(
+                            {id: user._id}, 
+                            process.env.KEY_JWT,
+                            {expiresIn: 60*60*24}
+                            )
 
-                        res.status(200).json({
-                            sucess: true,
-                            response: 'user: loginUser',
-                            message: 'Welcome' + user.name
-                        })
+
+                            user.logged = true
+                            await user.save() //se cambia el logged true del usuario
+    
+                            res.status(200).json({
+                                sucess: true,
+                                response: {
+                                    user: loginUser, 
+                                    token: token
+                                    },
+                                message: 'Welcome' + user.name
+                            })
                     } else { //si contraseña no coincide
                         res.status(400).json({
                             sucess: false,
