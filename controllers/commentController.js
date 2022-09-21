@@ -112,12 +112,7 @@ const commentController = {
         let itinerary = req.params.id // id itinerario que viene por params
         
         let {body} = req.body  //commentario que quiero modificar
-        
-       
-
-        
-
-         let comment = req.body.comment
+        let comment = req.body.comment
 
         try {
             let result = await validator.validateAsync({comment, user} )
