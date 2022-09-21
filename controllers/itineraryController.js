@@ -53,13 +53,14 @@ const itineraryController = {
             likes,
             tags,
             duration,
+            comments
         } = req.body
 
         try {
             //Validamos antes de comunicarnos con el modelo
             let result = await validator.validateAsync(req.body)
 
-            await new Itinerary({ name, user, city, price, likes, tags, duration, }).save()
+            await new Itinerary({ name, user, city, price, likes, tags, duration, comments }).save()
 
             res.status(201).json({
                 message: 'itinerary created',
@@ -104,6 +105,7 @@ const itineraryController = {
         const { id } = req.params
         try {
             let ItineraryOne = await Itinerary.findOne({ _id: id },)
+            .populate("comments", {comment:1})
 
             if (ItineraryOne) {
 
@@ -146,6 +148,7 @@ const itineraryController = {
             let users = await Itinerary.find(query)
                 .populate("city", { name: 1, photo: 1 })
                 .populate("user", { name: 1, photo: 1 })
+                .populate("comments", {comment:1})
             res.status(200).json({
                 message: "query found",
                 response: users,
