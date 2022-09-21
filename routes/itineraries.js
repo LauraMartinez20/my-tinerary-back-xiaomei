@@ -13,7 +13,7 @@ router.get('/:id', read);
 
 router.delete('/:id', destroy)
 
-router.patch ('/likes', dislikeLike)
+//router.patch ('/likes', passport.authenticate('jwt', {session:false}), dislikeLike)
 
 router.patch('/like/:id', passport.authenticate('jwt', {session:false}), likes)
 
