@@ -1,5 +1,6 @@
 const Comment = require('../models/Comment')
 const Joi = require('joi')
+const { itinerary } = require('./activityController')
 
 const validator = Joi.object({
     "comment": Joi.string()
@@ -68,6 +69,10 @@ const commentController = {
         }
     },
 
+    update: async (req, res) => {
+
+    },
+
     commentaries: async (req, res) => {
         console.log(req.query)
         let {id} = req.params
@@ -98,6 +103,39 @@ const commentController = {
             res.status(400).json()
         }
     },
+
+    updateComment : async (req, res) => {
+        let {id} = req.params //commentario que quiero modificar
+
+        let userID = req.user.id
+         //comentario del usuario que viene de passport
+
+         let newComment = req.body.comment
+
+        try {
+
+            let comment = await Comment.findOne({_id:id})
+
+            if (comment) {
+
+                comment.comment = newComment
+                
+                await comment.save()
+                res.status(200).json({
+                    message: "The comment was updated",
+                    response: comment,
+                    success: true
+                })
+            }
+            
+        } catch (error) {
+            console.log(error)
+
+            
+        }
+
+    },
+
 
 
     destroy: async (req, res) => {
