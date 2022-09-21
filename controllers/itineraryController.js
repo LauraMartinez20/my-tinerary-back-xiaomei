@@ -11,6 +11,7 @@ const validator = Joi.object({
             'string.min': 'NAME_TOO_SHORT',
             'string.max': 'NAME_TOO_LARGE',
         }),
+    
     "price": Joi.number()
         .required()
         .min(100)
@@ -169,15 +170,15 @@ const itineraryController = {
             let itinerary = await Itinerary.findOne({ _id: id })
 
             if (itinerary.likes.includes(userId)) {
-                await Itinerary.findByIdAndUpdate({ _id: id }, { $push: { likes: userId } }, { new: true }).save()
+                await Itinerary.findOneAndUpdate({ _id: id }, { $pull: { likes: userId } }, { new: true })
                 res.status(200).json({
-                    message: 'Liked',
+                    message: 'disLiked',
                     success: true
                 })
             } else {
-                await Itinerary.findByIdAndUpdate({ _id: id }, { $pull: { likes: userId } }, { new: true }).save()
+                await Itinerary.findOneAndUpdate({ _id: id }, { $push: { likes: userId } }, { new: true })
                 res.status(200).json({
-                    message: 'Disliked',
+                    message: 'liked',
                     success: true
                 })
             }
@@ -192,7 +193,7 @@ const itineraryController = {
 
     },
 
-    dislikeLike: async (req, res) => {
+   /* dislikeLike: async (req, res) => {
         let { id } = req.user
         
         let { itineraryId } = req.body
@@ -230,7 +231,7 @@ const itineraryController = {
             })
             
         }
-    },
+    },*/
 
 
     destroy: async (req, res) => {
