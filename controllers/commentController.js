@@ -3,6 +3,9 @@ const Joi = require('joi')
 const { itinerary } = require('./activityController')
 
 const validator = Joi.object({
+
+    "user": Joi.object(),
+
     "comment": Joi.string()
     .required()
     .min(10)
@@ -103,6 +106,33 @@ const commentController = {
             res.status(400).json()
         }
     },
+    createComment : async (req, res) => {
+        let user = req.user.id  //comentario del usuario que viene de passport
+        console.log(user)
+        let itinerary = req.params.id // id itinerario que viene por params
+        
+        let {body} = req.body  //commentario que quiero modificar
+        let comment = req.body.comment
+
+        try {
+            let result = await validator.validateAsync({comment, user} )
+            let newComment = await new Comment({user, comment, itinerary, }).save()
+            if (newComment) {
+                //comment.comment = newComment   
+                res.status(200).json({
+                    message: "The comment was created",
+                    response: newComment,
+                    success: true
+                })
+            }
+            
+        } catch (error) {
+            console.log(error)
+
+            
+        }
+
+    },
 
     updateComment : async (req, res) => {
         let {id} = req.params //commentario que quiero modificar
@@ -135,7 +165,37 @@ const commentController = {
         }
 
     },
+    deleteComment : async (req, res) => {
+        let {id} = req.params //commentario que quiero modificar
 
+        let userID = req.user.id
+         //comentario del usuario que viene de passport
+
+         let newComment = req.body.comment
+
+        try {
+
+            let comment = await Comment.findByIdAndDelete({_id:id})
+
+            if (comment) {
+
+                comment.comment = newComment
+                
+                await comment.save()
+                res.status(200).json({
+                    message: "The comment was deleted",
+                    response: comment,
+                    success: true
+                })
+            }
+            
+        } catch (error) {
+            console.log(error)
+
+            
+        }
+
+    },
 
 
     destroy: async (req, res) => {

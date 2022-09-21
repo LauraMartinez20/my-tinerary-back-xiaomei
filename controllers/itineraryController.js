@@ -11,6 +11,7 @@ const validator = Joi.object({
             'string.min': 'NAME_TOO_SHORT',
             'string.max': 'NAME_TOO_LARGE',
         }),
+    
     "price": Joi.number()
         .required()
         .min(100)
@@ -52,13 +53,14 @@ const itineraryController = {
             likes,
             tags,
             duration,
+            comments
         } = req.body
 
         try {
             //Validamos antes de comunicarnos con el modelo
             let result = await validator.validateAsync(req.body)
 
-            await new Itinerary({ name, user, city, price, likes, tags, duration, }).save()
+            await new Itinerary({ name, user, city, price, likes, tags, duration, comments }).save()
 
             res.status(201).json({
                 message: 'itinerary created',
@@ -103,6 +105,7 @@ const itineraryController = {
         const { id } = req.params
         try {
             let ItineraryOne = await Itinerary.findOne({ _id: id },)
+            .populate("comments", {comment:1})
 
             if (ItineraryOne) {
 
@@ -145,6 +148,7 @@ const itineraryController = {
             let users = await Itinerary.find(query)
                 .populate("city", { name: 1, photo: 1 })
                 .populate("user", { name: 1, photo: 1 })
+                .populate("comments", {comment:1})
             res.status(200).json({
                 message: "query found",
                 response: users,
@@ -169,15 +173,15 @@ const itineraryController = {
             let itinerary = await Itinerary.findOne({ _id: id })
 
             if (itinerary.likes.includes(userId)) {
-                await Itinerary.findByIdAndUpdate({ _id: id }, { $push: { likes: userId } }, { new: true }).save()
+                await Itinerary.findOneAndUpdate({ _id: id }, { $pull: { likes: userId } }, { new: true })
                 res.status(200).json({
-                    message: 'Liked',
+                    message: 'disLiked',
                     success: true
                 })
             } else {
-                await Itinerary.findByIdAndUpdate({ _id: id }, { $pull: { likes: userId } }, { new: true }).save()
+                await Itinerary.findOneAndUpdate({ _id: id }, { $push: { likes: userId } }, { new: true })
                 res.status(200).json({
-                    message: 'Disliked',
+                    message: 'liked',
                     success: true
                 })
             }
@@ -192,7 +196,7 @@ const itineraryController = {
 
     },
 
-    dislikeLike: async (req, res) => {
+   /* dislikeLike: async (req, res) => {
         let { id } = req.user
         
         let { itineraryId } = req.body
@@ -230,7 +234,7 @@ const itineraryController = {
             })
             
         }
-    },
+    },*/
 
 
     destroy: async (req, res) => {
