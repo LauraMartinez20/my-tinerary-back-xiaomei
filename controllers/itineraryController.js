@@ -1,7 +1,48 @@
 const Itinerary = require('../models/Itinerary')
 const Joi = require('joi')
 
-const validator = Joi.object({
+const create = Joi.object({
+    "name": Joi.string()
+        .required()
+        .min(4)
+        .max(100)
+        .messages({
+            'any.required': 'NAME_REQUIRED',
+            'string.min': 'NAME_TOO_SHORT',
+            'string.max': 'NAME_TOO_LARGE',
+        }),
+
+    "price": Joi.number()
+        .required()
+        .greater(100)
+        .less(1000)
+        .messages({
+            'any.required': 'PRICE_REQUIRED',
+            'number.greater': 'PRICE_TOO_SHORT',
+            'number.less': 'PRICE_TOO_MUCH',
+        }),
+    "likes": Joi.array()
+        .required()
+        .messages({
+            'any.required': 'LIKES_REQUIRED',
+        }),
+    "tags": Joi.array()
+        .required()
+        .messages({
+            'any.required': 'TAGS_REQUIRED',
+        }),
+    "duration": Joi.number()
+        .required()
+        .greater(30)
+        .less(500)
+        .messages({
+            'any.required': 'DURATION_REQUIRED',
+            'number.greater': 'DURATION_TOO_SHORT',
+            'number.less': 'DURATION_TOO_LONG',
+        }),
+    
+})
+const edit = Joi.object({
     "name": Joi.string()
         .required()
         .min(4)
@@ -18,8 +59,8 @@ const validator = Joi.object({
         .max(1000)
         .messages({
             'any.required': 'PRICE_REQUIRED',
-            'string.min': 'PRICE_TOO_SHORT',
-            'string.max': 'PRICE_TOO_MUCH',
+            'number.min': 'PRICE_TOO_SHORT',
+            'number.max': 'PRICE_TOO_MUCH',
         }),
     "likes": Joi.array()
         .required()
@@ -31,14 +72,14 @@ const validator = Joi.object({
         .messages({
             'any.required': 'TAGS_REQUIRED',
         }),
-    "duration": Joi.string()
+    "duration": Joi.number()
         .required()
         .min(30)
         .max(500)
         .messages({
             'any.required': 'DURATION_REQUIRED',
-            'string.min': 'DURATION_TOO_SHORT',
-            'string.max': 'DURATION_TOO_LONG',
+            'number.min': 'DURATION_TOO_SHORT',
+            'number.max': 'DURATION_TOO_LONG',
         }),
 })
 
@@ -57,8 +98,9 @@ const itineraryController = {
         } = req.body
 
         try {
+            console.log(req.body)
             //Validamos antes de comunicarnos con el modelo
-            let result = await validator.validateAsync(req.body)
+            let result = await create.validateAsync(req.body)
 
             await new Itinerary({ name, user, city, price, likes, tags, duration, comments }).save()
 
@@ -84,10 +126,11 @@ const itineraryController = {
             let findItinerary = await Itinerary.findOne({ _id: id })
 
             if (findItinerary) {
-                let  itinerarybd = await Itinerary.findOneAndUpdate({ _id: id }, itinerary, { new: true }).save()
+                let  itinerarybd = await Itinerary.findOneAndUpdate({ _id: id }, itinerary, { new: true })
+                 await itinerarybd.save()
                 res.status(200).json({
                     message: "The itinerary was updated",
-                    response: updateItinerary,
+                    response: itinerarybd,
                     success: true,
                     price: itinerarybd.price
                 })
