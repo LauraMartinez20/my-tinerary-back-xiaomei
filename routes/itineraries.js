@@ -15,7 +15,7 @@ router.delete('/:id', destroy)
 
 //router.patch ('/likes', passport.authenticate('jwt', {session:false}), dislikeLike)
 
-router.patch('/like/:id', passport.authenticate('jwt', {session:false}), likes)
+router.post('/like/:id', passport.authenticate('jwt', {session:false}), likes)
 
 
 module.exports = router;
