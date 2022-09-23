@@ -12,49 +12,49 @@ const validator = Joi.object({
     "role": Joi.string(),
 
     "name": Joi.string()
-    .required()
-    .min(4)
-    .max(100)
-    .messages({
-        'any.required': 'NAME_REQUIRED',
-        'string.min': 'NAME_TOO_SHORT',
-        'string.max': 'NAME_TOO_LARGE',
-    }),
+        .required()
+        .min(4)
+        .max(100)
+        .messages({
+            'any.required': 'NAME_REQUIRED',
+            'string.min': 'NAME_TOO_SHORT',
+            'string.max': 'NAME_TOO_LARGE',
+        }),
     "lastName": Joi.string()
-    .required()
-    .min(4)
-    .max(100)
-    .messages({
-        'any.required': 'LAST_NAME_REQUIRED',
-        'string.min': 'LAST_NAME_TOO_SHORT',
-        'string.max': 'LAST_NAME_TOO_LARGE',
-    }),
+        .required()
+        .min(4)
+        .max(100)
+        .messages({
+            'any.required': 'LAST_NAME_REQUIRED',
+            'string.min': 'LAST_NAME_TOO_SHORT',
+            'string.max': 'LAST_NAME_TOO_LARGE',
+        }),
     "photo": Joi.string()
-    .required()
-    .uri()
-    .messages({
-        'any.required': 'PHOTO_REQUIRED',
-        'string.uri':'INVALID_URL'
-    }),
+        .required()
+        .uri()
+        .messages({
+            'any.required': 'PHOTO_REQUIRED',
+            'string.uri': 'INVALID_URL'
+        }),
     "email": Joi.string()
-    .required()
-    .messages({
-        'any.required': 'EMAIL_REQUIRED',
-    }),
+        .required()
+        .messages({
+            'any.required': 'EMAIL_REQUIRED',
+        }),
     "password": Joi.string()
-    .required()
-    .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
-    .messages({
-        'any.required': 'PASSWORD_REQUIRED',
-        'string.min': 'PASSWORD_TOO_SHORT',
-        'string.max': 'PASSWORD_TOO_LARGE',
-    }),
+        .required()
+        .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
+        .messages({
+            'any.required': 'PASSWORD_REQUIRED',
+            'string.min': 'PASSWORD_TOO_SHORT',
+            'string.max': 'PASSWORD_TOO_LARGE',
+        }),
 
 
 })
 
 const userController = {
-    
+
 
     signUp: async (req, res) => {
         let {
@@ -69,9 +69,9 @@ const userController = {
         } = req.body
 
         try {
-             //Validamos antes de comunicarnos con el modelo
-             let result = await validator.validateAsync(req.body)
-             
+            //Validamos antes de comunicarnos con el modelo
+            let result = await validator.validateAsync(req.body)
+
             let user = await User.findOne({ email })
             if (!user) {
                 let logged = false
@@ -99,7 +99,7 @@ const userController = {
                         message: "User signed up from" + from,
                         success: true,
                         id: user._id
-                        
+
                     })
 
                 }
@@ -135,7 +135,7 @@ const userController = {
     //El código único y aleatorio creado en sendMail se pasa por params a este método para verificar la cuenta
     //luego de requerirlo, lo comparamos con los perfiles ya creados (Se busca en base de datos)
     signIn: async (req, res) => {
-        const { email, password, from} = req.body
+        const { email, password, from } = req.body
 
         try {
 
@@ -158,16 +158,16 @@ const userController = {
                             email: user.email,
                             role: user.role,
                             from: user.from,
-                            photo:user.photo,
+                            photo: user.photo,
                             name: user.name,
-                            lastName:user.lastName
-                            
+                            lastName: user.lastName
+
                         }
                         const token = jwt.sign(
-                            {id: user._id}, 
+                            { id: user._id },
                             process.env.KEY_JWT,
-                            {expiresIn: 60*60*24}
-                            )
+                            { expiresIn: 60 * 60 * 24 }
+                        )
 
 
                         user.logged = true
@@ -176,9 +176,9 @@ const userController = {
                         res.status(200).json({
                             sucess: true,
                             response: {
-                                user: loginUser, 
+                                user: loginUser,
                                 token: token
-                                },
+                            },
                             message: 'Welcome' + user.name
                         })
                     } else { //si contraseña no coincide
@@ -196,29 +196,29 @@ const userController = {
                             email: user.email,
                             role: user.role,
                             from: user.from,
-                            photo:user.photo,
+                            photo: user.photo,
                             name: user.name,
-                            lastName:user.lastName
+                            lastName: user.lastName
                         }
 
                         const token = jwt.sign(
-                            {id: user._id}, 
+                            { id: user._id },
                             process.env.KEY_JWT,
-                            {expiresIn: 60*60*24}
-                            )
+                            { expiresIn: 60 * 60 * 24 }
+                        )
 
 
-                            user.logged = true
-                            await user.save() //se cambia el logged true del usuario
-    
-                            res.status(200).json({
-                                sucess: true,
-                                response: {
-                                    user: loginUser, 
-                                    token: token
-                                    },
-                                message: 'Welcome' + user.name
-                            })
+                        user.logged = true
+                        await user.save() //se cambia el logged true del usuario
+
+                        res.status(200).json({
+                            sucess: true,
+                            response: {
+                                user: loginUser,
+                                token: token
+                            },
+                            message: 'Welcome' + user.name
+                        })
                     } else { //si contraseña no coincide
                         res.status(400).json({
                             sucess: false,
@@ -241,7 +241,7 @@ const userController = {
             console.log(error)
             res.status(400).json({
                 sucess: false,
-                    message: 'Uh oh something is wrong, try again'
+                message: 'Uh oh something is wrong, try again'
 
             })
 
@@ -250,16 +250,16 @@ const userController = {
 
     verifyToken: async (req, res) => {
         if (!req.err) {
-            let token = jwt.sign({id: req.user.id}, process.env.KEY_JWT, { expiresIn:60*60*24 })
+            let token = jwt.sign({ id: req.user.id }, process.env.KEY_JWT, { expiresIn: 60 * 60 * 24 })
             res.status(200).json({
                 message: "Welcome" + req.user.name,
                 success: true,
                 response: {
                     user: req.user,
                     token: token
-                        }
+                }
             })
-        }else{
+        } else {
             res.status(400).json({
                 message: 'Sign in!',
                 success: false
@@ -295,19 +295,19 @@ const userController = {
 
 
 
-    signOut: async (req, res) => { 
+    signOut: async (req, res) => {
         const { email } = req.body
 
         try {
             const user = await User.findOneAndUpdate({ email: email })
-            if(user.logged == true) {
+            if (user.logged == true) {
                 user.logged = false
                 await user.save()
                 res.status(200).json({
                     message: "Logged out succesfully",
                     success: true
                 })
-            }else {
+            } else {
                 res.status(400).json({
                     message: "User is not logged in",
                     success: false
@@ -319,9 +319,39 @@ const userController = {
                 message: "sign out error please try again.",
                 success: false
             })
-            
+
         }
     }, //findOneandUpdate y cambiar de true a false
+
+    editProfile: async (req, res) => {
+        let body = req.body
+        let { id } = req.user
+
+        try {
+            let result = await validator.validateAsync(req.body);
+            let user = await user.findOneAndUpdate({ _id: id }, body, { new: true })
+
+            if (user) {
+                res.status(200).json({
+                    message: "Profile was modified",
+                    success: true,
+                })
+            } else {
+                res.status(404).json({
+                    message: "error here",
+                    sucess: false
+                })
+            }
+
+        } catch (error) {
+            console.log(error)
+            res.status(400).json({
+                message: "Error try again",
+                success: false
+            })
+
+        }
+    }
 
 
 
