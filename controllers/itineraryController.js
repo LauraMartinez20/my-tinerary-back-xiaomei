@@ -84,11 +84,12 @@ const itineraryController = {
             let findItinerary = await Itinerary.findOne({ _id: id })
 
             if (findItinerary) {
-                await Itinerary.findOneAndUpdate({ _id: id }, itinerary, { new: true }).save()
+                let  itinerarybd = await Itinerary.findOneAndUpdate({ _id: id }, itinerary, { new: true }).save()
                 res.status(200).json({
                     message: "The itinerary was updated",
                     response: updateItinerary,
-                    success: true
+                    success: true,
+                    price: itinerarybd.price
                 })
             }
         } catch (error) {

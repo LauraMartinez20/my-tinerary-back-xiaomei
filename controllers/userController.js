@@ -98,6 +98,7 @@ const userController = {
                     res.status(201).json({
                         message: "User signed up from" + from,
                         success: true,
+                        id: user._id
                         
                     })
 
