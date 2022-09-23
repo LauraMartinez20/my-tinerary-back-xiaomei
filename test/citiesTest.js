@@ -22,7 +22,7 @@ describe('POST /cities', function () {
             })
     })
 
-    it('Must respond with 201 status code', function (done) {
+   /* it('Must respond with 201 status code', function (done) {
         request(app)
             .post('/cities')
             .send({
