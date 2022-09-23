@@ -11,7 +11,7 @@ const validator = Joi.object({
             'string.min': 'NAME_TOO_SHORT',
             'string.max': 'NAME_TOO_LARGE',
         }),
-    
+
     "price": Joi.number()
         .required()
         .min(100)
@@ -85,13 +85,13 @@ const itineraryController = {
 
             if (findItinerary) {
                 await Itinerary.findOneAndUpdate({ _id: id }, itinerary, { new: true }).save()
-            res.status(200).json({
-                message: "The itinerary was updated",
-                response: updateItinerary,
-                success: true
-            })
+                res.status(200).json({
+                    message: "The itinerary was updated",
+                    response: updateItinerary,
+                    success: true
+                })
             }
-            } catch (error) {
+        } catch (error) {
             console.log(error)
             res.status(400).json({
                 message: "error",
@@ -105,7 +105,7 @@ const itineraryController = {
         const { id } = req.params
         try {
             let ItineraryOne = await Itinerary.findOne({ _id: id },)
-            .populate("comments", {comment:1})
+                .populate("comments", { comment: 1 })
 
             if (ItineraryOne) {
 
@@ -148,7 +148,8 @@ const itineraryController = {
             let users = await Itinerary.find(query)
                 .populate("city", { name: 1, photo: 1 })
                 .populate("user", { name: 1, photo: 1 })
-                .populate("comments", {comment:1})
+                // .populate("comments", { comment: 1, user: 1 })
+                // .populate("comments.user")
             res.status(200).json({
                 message: "query found",
                 response: users,
@@ -161,11 +162,15 @@ const itineraryController = {
             res.status(400).json()
         }
     },
- 
-    
+
+
     likes: async (req, res) => {
 
+
+
         let { id } = req.params
+
+        console.log(id)
 
         let userId = req.user.id
 
@@ -196,45 +201,45 @@ const itineraryController = {
 
     },
 
-   /* dislikeLike: async (req, res) => {
-        let { id } = req.user
-        
-        let { itineraryId } = req.body
-        try {
-            let  itinerary = Itinerary.findOne({_id:itineraryId})
-
-            if (itinerary && itinerary.likes.includes(id)) {
-                itinerary.likes.pull(id)
-                await itinerary.save()
-                res.status(400).json({
-                    message: 'Itinerary disliked',
-                    success: false
-                })
-                
-            }else if (!itinerary.likes.includes(id)) {
-                itinerary.likes.push(id)
-                await itinerary.save()
-                res.status(400).json({
-                    message: 'Itinerary liked',
-                    success: false
-                })
-            }else{
-                res.status(404).json({
-                    message: 'Itinerary not found',
-                    success: false
-                })
-
-            }
-            
-        } catch (error) {
-            console.log(error)
-            res.status(400).json({
-                message: 'error',
-                success: false
-            })
-            
-        }
-    },*/
+    /* dislikeLike: async (req, res) => {
+         let { id } = req.user
+         
+         let { itineraryId } = req.body
+         try {
+             let  itinerary = Itinerary.findOne({_id:itineraryId})
+ 
+             if (itinerary && itinerary.likes.includes(id)) {
+                 itinerary.likes.pull(id)
+                 await itinerary.save()
+                 res.status(400).json({
+                     message: 'Itinerary disliked',
+                     success: false
+                 })
+                 
+             }else if (!itinerary.likes.includes(id)) {
+                 itinerary.likes.push(id)
+                 await itinerary.save()
+                 res.status(400).json({
+                     message: 'Itinerary liked',
+                     success: false
+                 })
+             }else{
+                 res.status(404).json({
+                     message: 'Itinerary not found',
+                     success: false
+                 })
+ 
+             }
+             
+         } catch (error) {
+             console.log(error)
+             res.status(400).json({
+                 message: 'error',
+                 success: false
+             })
+             
+         }
+     },*/
 
 
     destroy: async (req, res) => {

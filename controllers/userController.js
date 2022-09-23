@@ -157,8 +157,9 @@ const userController = {
                             email: user.email,
                             role: user.role,
                             from: user.from,
-                            photo:user.photo
-                            
+                            photo:user.photo,
+                            name: user.name,
+                            lastName:user.lastName
                             
                         }
                         const token = jwt.sign(
@@ -195,6 +196,8 @@ const userController = {
                             role: user.role,
                             from: user.from,
                             photo:user.photo,
+                            name: user.name,
+                            lastName:user.lastName
                         }
 
                         const token = jwt.sign(

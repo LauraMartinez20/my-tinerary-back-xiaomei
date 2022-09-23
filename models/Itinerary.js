@@ -9,7 +9,7 @@ const itinerarySchema = new mongoose.Schema({
     },
     user: {type:mongoose.Types.ObjectId, ref:'users'},
     city: {type:mongoose.Types.ObjectId, ref:'cities'}, 
-    comments: [{type:mongoose.Types.ObjectId, ref:'comment'}],
+    // comments: [{type:mongoose.Types.ObjectId, ref:'comment'}],
 
     price: {
         type:Number, 

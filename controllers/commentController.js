@@ -86,25 +86,36 @@ const commentController = {
             query.user = req.query.user
             console.log(query.user)
         }
-        if (req.query.itineraries) {
+        if (req.query.itinerary) {
             query.itinerary = req.query.itinerary
         }
 
         try {
-            let users = await Itinerary.find(query)
-            .populate ("itinerary", {name:1, photo:1})
-            .populate("user", {name:1, photo:1})
-            res.status(200).json({
-                message: "query found",
-                response: users,
-                success: true
-            })
+            let comments = await Comment.find(query)
+            .populate ("itinerary", {name:1, photo:1, _id:1})
+            .populate("user", {name:1, photo:1, _id:1})
+            if (comments) {
+                res.status(200).json({
+                    message: 'You get comments',
+                    response: comments,
+                    success: true
+                })
+            } else {
+                res.status(404).json({
+                    message: "Could't find comments",
+                    success: false
+                })
+            } //filtra comentarios que coinciden con id de front
 
         } catch (error) {
 
             console.log(error)
-            res.status(400).json()
+            res.status(400).json({
+                message: "ERROOR TRY AGAIN",
+                success: false
+            })
         }
+        
     },
     createComment : async (req, res) => {
         let user = req.user.id  //comentario del usuario que viene de passport
