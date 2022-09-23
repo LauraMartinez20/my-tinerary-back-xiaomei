@@ -23,23 +23,22 @@ describe('POST /signup', function () {
     })
 })
 
-/*describe('Patch/itinerary', function () {
-    this.timeout(20000)
+describe('Patch/itinerary', function () {
+    this.timeout(10000)
    it('The itinerary was update', function (done) {
         request(app)
             .patch('/itineraries/6317c7514c5cbbfeb1e8fa27')
             .send({
-                price: 60,
+                price: 80,
             })
+            .expect(200)
             .then(response => {
                 assert.isNumber(response.body.price)
-                done()
+                return done()
             })
     })
     
-})*/
-
-
+})
 
 describe('GET/itinerary from activity', function() {
     it('itinerary found', function(done) {
