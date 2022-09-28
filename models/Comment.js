@@ -12,7 +12,7 @@ const commentSchema = new mongoose.Schema({ //Declaramos un esquema
     
 })
 const Comment = mongoose.model(
-    'comment',
+    'comments',
     commentSchema
 )
 
